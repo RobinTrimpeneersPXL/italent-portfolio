@@ -44,9 +44,7 @@ jobs:
       - name: Run Load Test
         if: steps.setup.outputs.skip == 'false'
         run: |
-          # Note: In a real environment, you would target your TEST environment URL
-          # Here we use a placeholder or assume the environment is reachable
-          locust -f INFRA/kustomize/locust/base/configmap.yaml \
+          locust -f INFRA/kustomize/locust/base/locustfile.py \
             --headless \
             --users 10 --spawn-rate 2 --run-time 30s \
             --host http://test.portfolio.local \

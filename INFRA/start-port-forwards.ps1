@@ -1,4 +1,4 @@
-# Port Forwarding Script for Portfolio Project
+# Port Forwarding Script for Portfolio Project (Direct Deployment)
 # Run this script in PowerShell
 
 Write-Host "Starting Port Forwards..." -ForegroundColor Cyan
@@ -12,7 +12,7 @@ function Start-PF ($name, $ns, $res, $port) {
         kubectl -n $n port-forward $r $p 2>&1
     } -ArgumentList $ns, $res, $port
     
-    Start-Sleep -Seconds 2
+    Start-Sleep -Seconds 3
     if ($j.State -eq 'Failed' -or $j.State -eq 'Stopped') {
         Write-Host " [FAILED]" -ForegroundColor Red
     } else {
@@ -21,17 +21,24 @@ function Start-PF ($name, $ns, $res, $port) {
     return $j
 }
 
+# Wait for namespaces to exist
+Write-Host "Checking for services..."
+while (-not (kubectl get ns portfolio-prod 2>$null)) { Start-Sleep -Seconds 2 }
+
 $jobs += Start-PF "Portfolio App" "portfolio-prod" "svc/frontend-service" "8080:80"
-$jobs += Start-PF "ArgoCD Server" "argocd"         "svc/argocd-server"     "8085:443"
 $jobs += Start-PF "Locust UI"     "locust"         "svc/locust"            "8090:8089"
-$jobs += Start-PF "Grafana"       "monitoring"     "svc/kube-prometheus-stack-grafana" "3000:80"
+
+if (kubectl get ns monitoring 2>$null) {
+    $jobs += Start-PF "Grafana" "monitoring" "svc/kube-prometheus-stack-grafana" "3000:80"
+}
 
 Write-Host "`n----------------------------------------------------------------"
 Write-Host "Port forwards are running in the background."
 Write-Host "Portfolio: http://localhost:8080"
-Write-Host "ArgoCD:    https://localhost:8085 (Accept certificate warning)"
 Write-Host "Locust:    http://localhost:8090"
+if (kubectl get ns monitoring 2>$null) {
 Write-Host "Grafana:   http://localhost:3000 (admin / prom-operator)"
+}
 Write-Host "----------------------------------------------------------------"
 Write-Host "Press Enter to stop all forwards and close this window..."
 Read-Host

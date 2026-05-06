@@ -10,3 +10,11 @@ resources:
   - servicemonitor.yaml
   - dashboard-configmap.yaml
   - scaledobject.yaml
+
+images:
+- name: backend
+  newName: portfolio-backend
+  newTag: latest
+- name: frontend
+  newName: portfolio-frontend
+  newTag: latest

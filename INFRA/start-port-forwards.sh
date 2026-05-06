@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Port Forwarding Script for Portfolio Project
+# Port Forwarding Script for Portfolio Project (Direct Deployment)
 # Run this script in a bash shell
 
 # Colors for output
@@ -24,7 +24,7 @@ start_pf() {
     local pid=$!
     pids+=($pid)
     
-    sleep 2
+    sleep 3
     if ps -p $pid > /dev/null; then
         echo -e " [${GREEN}OK${NC}]"
     else
@@ -32,17 +32,25 @@ start_pf() {
     fi
 }
 
+# Wait for namespaces to exist
+echo "Checking for services..."
+until kubectl get ns portfolio-prod >/dev/null 2>&1; do sleep 2; done
+
 start_pf "Portfolio App" "portfolio-prod" "svc/frontend-service" "8080:80"
-start_pf "ArgoCD Server" "argocd"         "svc/argocd-server"     "8085:443"
 start_pf "Locust UI"     "locust"         "svc/locust"            "8090:8089"
-start_pf "Grafana"       "monitoring"     "svc/kube-prometheus-stack-grafana" "3000:80"
+
+# Optional: Port forward Monitoring if installed
+if kubectl get ns monitoring >/dev/null 2>&1; then
+    start_pf "Grafana"       "monitoring"     "svc/kube-prometheus-stack-grafana" "3000:80"
+fi
 
 echo -e "\n----------------------------------------------------------------"
 echo -e "Port forwards are running in the background."
 echo -e "Portfolio: http://localhost:8080"
-echo -e "ArgoCD:    https://localhost:8085 (Accept certificate warning)"
 echo -e "Locust:    http://localhost:8090"
+if kubectl get ns monitoring >/dev/null 2>&1; then
 echo -e "Grafana:   http://localhost:3000 (admin / prom-operator)"
+fi
 echo -e "----------------------------------------------------------------"
 echo -e "Press Ctrl+C to stop all forwards..."
 

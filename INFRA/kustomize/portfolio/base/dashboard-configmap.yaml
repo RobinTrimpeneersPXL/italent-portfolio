@@ -7,39 +7,41 @@ metadata:
 data:
   portfolio-golden-signals.json: |
     {
+      "uid": "portfolio-signals",
       "title": "Portfolio Backend - Golden Signals",
+      "editable": true,
       "panels": [
         {
-          "title": "Traffic (Req/sec)",
-          "type": "graph",
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "title": "Active Pods",
+          "type": "stat",
+          "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
           "targets": [
-            { "expr": "sum(rate(http_requests_total{namespace=\"portfolio-prod\"}[1m])) by (method, handler)", "legendFormat": "{{method}} {{handler}}" }
+            { "expr": "count(kube_pod_info{namespace=\"portfolio-prod\"})", "legendFormat": "Pods" }
           ]
         },
         {
-          "title": "Latency (P95 & P99)",
+          "title": "CPU Usage (Cores)",
           "type": "graph",
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
           "targets": [
-            { "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace=\"portfolio-prod\"}[1m])) by (le, handler))", "legendFormat": "P95 {{handler}}" },
-            { "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{namespace=\"portfolio-prod\"}[1m])) by (le, handler))", "legendFormat": "P99 {{handler}}" }
+            { "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"portfolio-prod\", container!=\"\"}[1m])) by (pod)", "legendFormat": "{{pod}}" }
           ]
         },
         {
-          "title": "Errors (Rate)",
+          "title": "Memory Usage (MB)",
           "type": "graph",
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
           "targets": [
-            { "expr": "sum(rate(http_requests_total{status=~\"5.*\", namespace=\"portfolio-prod\"}[1m])) / sum(rate(http_requests_total{namespace=\"portfolio-prod\"}[1m])) * 100", "legendFormat": "Error Rate %" }
+            { "expr": "sum(container_memory_working_set_bytes{namespace=\"portfolio-prod\", container!=\"\"}) by (pod) / 1024 / 1024", "legendFormat": "{{pod}}" }
           ]
         },
         {
-          "title": "CPU Usage",
+          "title": "Network Traffic (Rx/Tx)",
           "type": "graph",
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
           "targets": [
-            { "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"portfolio-prod\", container=\"backend\"}[1m]))", "legendFormat": "CPU Usage" }
+            { "expr": "sum(rate(container_network_receive_bytes_total{namespace=\"portfolio-prod\"}[1m])) by (pod)", "legendFormat": "Rx {{pod}}" },
+            { "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"portfolio-prod\"}[1m])) by (pod)", "legendFormat": "Tx {{pod}}" }
           ]
         }
       ]

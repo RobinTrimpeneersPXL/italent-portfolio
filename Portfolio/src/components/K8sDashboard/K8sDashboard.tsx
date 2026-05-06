@@ -136,6 +136,26 @@ const K8sDashboard: React.FC = () => {
                         </Card>
                     </Col>
                 </Row>
+
+                {/* Grafana Dashboard Iframe */}
+                <Row className="mt-4">
+                    <Col>
+                        <Card className="border-0 shadow-sm">
+                            <Card.Header className="bg-dark text-white fw-bold">
+                                Real-time Metrics (Grafana)
+                            </Card.Header>
+                            <Card.Body className="p-0">
+                                <iframe
+                                    src="http://localhost:3000/d/portfolio-signals/portfolio-backend-golden-signals?orgId=1&refresh=5s&kiosk"
+                                    width="100%"
+                                    height="600px"
+                                    frameBorder="0"
+                                    title="Grafana Dashboard"
+                                ></iframe>
+                            </Card.Body>
+                        </Card>
+                    </Col>
+                </Row>
             </Container>
         </section>
     );

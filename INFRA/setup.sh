@@ -25,8 +25,8 @@ k3d cluster create portfolio -p "80:80@loadbalancer" -p "443:443@loadbalancer" -
 # 2. Install ArgoCD
 echo -e "\n${CYAN}[2/4] Installing ArgoCD...${NC}"
 
-kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+kubectl create namespace argocd 2>/dev/null || true
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml --server-side
 
 echo "Waiting for ArgoCD components to start (30s)..."
 sleep 30
@@ -39,6 +39,11 @@ kubectl apply -f INFRA/argocd/root.yaml
 # 4. Finalization
 echo -e "\n${CYAN}[4/4] Finalizing...${NC}"
 
+# Get ArgoCD Password
+echo -n "Retrieving ArgoCD Admin Password: "
+ARGOCD_PWD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
+echo -e "${YELLOW}$ARGOCD_PWD${NC}"
+
 echo -e "\n${GREEN}Setup Complete!${NC}"
 echo "----------------------------------------------------------------"
 echo "IMPORTANT: Add to hosts file: 127.0.0.1 portfolio.local test.portfolio.local grafana.local locust.local"
@@ -46,5 +51,5 @@ echo "Portfolio App (PROD): http://portfolio.local"
 echo "Portfolio App (TEST): http://test.portfolio.local"
 echo "Grafana: http://grafana.local (admin / prom-operator)"
 echo "Locust UI: http://locust.local"
-echo "ArgoCD UI: kubectl port-forward svc/argocd-server -n argocd 8080:443"
+echo "ArgoCD UI: https://localhost:8085 (admin / $ARGOCD_PWD)"
 echo "----------------------------------------------------------------"
