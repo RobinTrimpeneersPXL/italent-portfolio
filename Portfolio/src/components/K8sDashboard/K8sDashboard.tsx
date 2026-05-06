@@ -72,7 +72,7 @@ const K8sDashboard: React.FC = () => {
             <Container>
                 <div className="text-center mb-4">
                     <h2 className="mb-3">{t('playground.title')}</h2>
-                    <img src="https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?auto=format&fit=crop&w=800&q=80" alt={t('playground.alt')} className="img-fluid rounded shadow-sm" style={{ maxHeight: '200px', objectFit: 'cover', width: '100%' }} />
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSsh6fRo_ojjURNysq7gtmMC6vMQ2VtXwkFMQ&s" alt={t('playground.alt')} className="img-fluid rounded shadow-sm" style={{ maxHeight: '200px', objectFit: 'cover', width: '100%' }} />
                 </div>
                 <Row className="mb-4">
                     <Col md={6}>

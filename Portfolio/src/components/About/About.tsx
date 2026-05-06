@@ -20,7 +20,6 @@ const About = () => {
         <Row className="mb-5">
           <Col lg={6}>
             <h2 className="display-4 fw-bold mb-4">{t('about.title')}</h2>
-            <img src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80" alt={t('about.alt')} className="img-fluid rounded shadow-sm mb-4" />
             <p className="lead text-muted mb-4">
               {t('about.intro')}
             </p>

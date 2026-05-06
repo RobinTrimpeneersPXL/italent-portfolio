@@ -5,7 +5,6 @@ export const translations: any = {
       activities: "Activiteiten",
       reflection: "Reflectie",
       playground: "K8s Speeltuin",
-      contact: "Contact",
     },
     hero: {
       subtitle: "Systeem- en Netwerkbeheer | Cybersecurity Enthousiast",
@@ -88,26 +87,6 @@ export const translations: any = {
         kill: "Pod Verwijderen",
       },
     },
-    contact: {
-      title: "Neem Contact Op",
-      subtitle: "Laten we praten over hoe ik jouw team kan helpen.",
-      info: "Contactinformatie",
-      labels: {
-        email: "E-mail",
-        location: "Locatie",
-        role: "Huidige Rol",
-        name: "Naam",
-        subject: "Onderwerp",
-        message: "Bericht",
-      },
-      placeholders: {
-        name: "Jan Janssen",
-        email: "jan@voorbeeld.nl",
-        subject: "Vraag over...",
-        message: "Jouw bericht hier...",
-      },
-      submit: "Bericht Verzenden",
-    },
     footer: {
       specialist: "Specialist Systeem- en Netwerkbeheer",
       copyright: "© 2026 Robin Trimpeneers | Gemaakt met React & Kubernetes",
@@ -119,7 +98,6 @@ export const translations: any = {
       activities: "Activities",
       reflection: "Reflection",
       playground: "K8s Playground",
-      contact: "Contact",
     },
     hero: {
       subtitle: "Systems & Network Management | Cybersecurity Enthusiast",
@@ -201,26 +179,6 @@ export const translations: any = {
         title: "Active Pods (Self-Healing Demo)",
         kill: "Kill Pod",
       },
-    },
-    contact: {
-      title: "Contact Me",
-      subtitle: "Let's connect and discuss how I can help your team.",
-      info: "Contact Information",
-      labels: {
-        email: "Email",
-        location: "Location",
-        role: "Current Role",
-        name: "Name",
-        subject: "Subject",
-        message: "Message",
-      },
-      placeholders: {
-        name: "John Doe",
-        email: "john@example.com",
-        subject: "Inquiry about...",
-        message: "Your message here...",
-      },
-      submit: "Send Message",
     },
     footer: {
       specialist: "Systems & Network Management Specialist",

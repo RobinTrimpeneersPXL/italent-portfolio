@@ -18,7 +18,6 @@ const AppNavbar = () => {
             <Nav.Link href="#activities" className="px-3">{t('navbar.activities')}</Nav.Link>
             <Nav.Link href="#reflection" className="px-3">{t('navbar.reflection')}</Nav.Link>
             <Nav.Link href="#playground" className="px-3 text-info fw-bold">{t('navbar.playground')}</Nav.Link>
-            <Nav.Link href="#contact" className="px-3">{t('navbar.contact')}</Nav.Link>
 
             <NavDropdown title={language.toUpperCase()} id="language-nav-dropdown" className="ms-3 border rounded border-secondary">
               <NavDropdown.Item onClick={() => setLanguage('nl')} active={language === 'nl'}>
