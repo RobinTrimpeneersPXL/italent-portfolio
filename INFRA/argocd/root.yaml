@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/placeholder/italent.git # REPLACE WITH YOUR REPO URL
+    repoURL: https://github.com/RobinTrimpeneersPXL/italent-portfolio.git
     targetRevision: HEAD
     path: INFRA/argocd/applications
   destination:
