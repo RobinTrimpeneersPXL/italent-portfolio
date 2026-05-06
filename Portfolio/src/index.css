@@ -1,0 +1,63 @@
+:root {
+  --primary-bg: #0a192f;
+  --secondary-bg: #112240;
+  --accent-color: #64ffda;
+  --text-main: #ccd6f6;
+  --text-muted: #8892b0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #ffffff;
+  color: #2d3436;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #2d3436;
+}
+
+.text-info {
+  color: #00bcd4 !important;
+}
+
+.bg-dark {
+  background-color: #0a192f !important;
+}
+
+::selection {
+  background-color: #64ffda;
+  color: #0a192f;
+}
+
+.btn-info {
+  background-color: #00bcd4;
+  border-color: #00bcd4;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-info:hover {
+  background-color: #00acc1;
+  border-color: #00acc1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+}
+
+.tracking-tight {
+  letter-spacing: -0.05em;
+}
+
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

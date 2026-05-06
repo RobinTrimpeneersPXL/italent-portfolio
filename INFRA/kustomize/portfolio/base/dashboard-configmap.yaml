@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: portfolio-dashboard
+  labels:
+    grafana_dashboard: "1"
+data:
+  portfolio-golden-signals.json: |
+    {
+      "title": "Portfolio Backend - Golden Signals",
+      "panels": [
+        {
+          "title": "Traffic (Req/sec)",
+          "type": "graph",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "targets": [
+            { "expr": "sum(rate(http_requests_total{namespace=\"portfolio-prod\"}[1m])) by (method, handler)", "legendFormat": "{{method}} {{handler}}" }
+          ]
+        },
+        {
+          "title": "Latency (P95 & P99)",
+          "type": "graph",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "targets": [
+            { "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{namespace=\"portfolio-prod\"}[1m])) by (le, handler))", "legendFormat": "P95 {{handler}}" },
+            { "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{namespace=\"portfolio-prod\"}[1m])) by (le, handler))", "legendFormat": "P99 {{handler}}" }
+          ]
+        },
+        {
+          "title": "Errors (Rate)",
+          "type": "graph",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+          "targets": [
+            { "expr": "sum(rate(http_requests_total{status=~\"5.*\", namespace=\"portfolio-prod\"}[1m])) / sum(rate(http_requests_total{namespace=\"portfolio-prod\"}[1m])) * 100", "legendFormat": "Error Rate %" }
+          ]
+        },
+        {
+          "title": "CPU Usage",
+          "type": "graph",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+          "targets": [
+            { "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"portfolio-prod\", container=\"backend\"}[1m]))", "legendFormat": "CPU Usage" }
+          ]
+        }
+      ]
+    }

@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+namespace: locust
+patches:
+  - patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: locust
+      spec:
+        template:
+          spec:
+            containers:
+            - name: locust
+              env:
+              - name: LOCUST_HOST
+                value: "http://frontend-service.portfolio-prod.svc.cluster.local"

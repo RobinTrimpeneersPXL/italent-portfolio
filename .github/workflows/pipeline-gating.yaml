@@ -1,0 +1,88 @@
+name: Pipeline Gating
+
+on:
+  workflow_run:
+    workflows: ["Build and Deploy"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  pipeline-gate:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Determine Tag and Mode
+        id: setup
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_run" ]; then
+            TAG="${{ github.event.workflow_run.head_branch }}"
+          else
+            git fetch --tags
+            TAG=$(git tag --sort=-creatordate | grep '^TEST_' | head -n 1 || echo "TEST_v1")
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          if [[ "$TAG" != TEST_* ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup Python
+        if: steps.setup.outputs.skip == 'false'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install Locust
+        if: steps.setup.outputs.skip == 'false'
+        run: pip install locust
+
+      - name: Run Load Test
+        if: steps.setup.outputs.skip == 'false'
+        run: |
+          # Note: In a real environment, you would target your TEST environment URL
+          # Here we use a placeholder or assume the environment is reachable
+          locust -f INFRA/kustomize/locust/base/configmap.yaml \
+            --headless \
+            --users 10 --spawn-rate 2 --run-time 30s \
+            --host http://test.portfolio.local \
+            --csv=load_test_results \
+            --html=load_test_report.html
+
+      - name: Check Performance Thresholds
+        if: steps.setup.outputs.skip == 'false'
+        run: |
+          python3 -c "
+          import csv
+          import sys
+          try:
+              with open('load_test_results_stats.csv', 'r') as f:
+                  reader = csv.DictReader(f)
+                  for row in reader:
+                      if row['Name'] == 'Aggregated':
+                          avg_time = float(row['Average Response Time'])
+                          fail_rate = (int(row['Failure Count']) / int(row['Request Count']) * 100) if int(row['Request Count']) > 0 else 0
+                          print(f'Results: Avg={avg_time}ms, Fail Rate={fail_rate}%')
+                          if avg_time > 500:
+                              print('::error::Average Response Time > 500ms')
+                              sys.exit(1)
+                          if fail_rate > 1:
+                              print('::error::Error Rate > 1%')
+                              sys.exit(1)
+          except FileNotFoundError:
+              print('Load test results not found.')
+              sys.exit(1)
+          "
+
+      - name: Upload Load Test Report
+        if: steps.setup.outputs.skip == 'false' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: locust-load-test-report
+          path: |
+            load_test_report.html
+            load_test_results_stats.csv
