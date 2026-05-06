@@ -1,0 +1,16 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: frontend-scaler
+spec:
+  scaleTargetRef:
+    name: frontend-deployment
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+  - type: prometheus
+    metadata:
+      serverAddress: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+      metricName: http_requests_total
+      threshold: '10'
+      query: sum(rate(http_requests_total{namespace="portfolio-prod"}[2m]))
